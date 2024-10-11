@@ -156,7 +156,7 @@ def main():
             """, unsafe_allow_html=True
             )
             fig3 = px.bar(x=fc.soma_valores_por_classificacao(data_mika).sort_values(ascending=True).values, y=fc.soma_valores_por_classificacao(data_mika).sort_values(ascending=True).index, orientation='h')
-            st.plotly_chart(fig3, use_container_width=True)
+            #st.plotly_chart(fig3, use_container_width=True)
 
     st.subheader('Tabelas', divider='blue')
 
