@@ -36,6 +36,26 @@ def read_sheet(service, RANGE_NAME):
 
     return df
 
+def read_sheet_saldo(service, RANGE_NAME):
+    sheet = service.spreadsheets()
+    result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=RANGE_NAME).execute()
+    values = result.get('values', [])
+    
+    if not values:
+        return pd.DataFrame()  # Retorna um DataFrame vazio se não houver dados
+
+    # Converter os dados para um DataFrame
+    df = pd.DataFrame(values[1:], columns=values[0])  # Usa a primeira linha como cabeçalho
+    df['proventos'] = df['proventos'].replace({',': '.'}, regex=True).astype(float) # Corrige a vírgula
+    df['debitos'] = df['debitos'].replace({',': '.'}, regex=True).astype(float) # Corrige a vírgula
+    df['emprestimos'] = df['emprestimos'].replace({',': '.'}, regex=True).astype(float) # Corrige a vírgula
+    df['devolucoes'] = df['devolucoes'].replace({',': '.'}, regex=True).astype(float) # Corrige a vírgula
+    df['deb_previsto'] = df['deb_previsto'].replace({',': '.'}, regex=True).astype(float) # Corrige a vírgula
+    df['prov_previsto'] = df['prov_previsto'].replace({',': '.'}, regex=True).astype(float) # Corrige a vírgula
+    df['data'] = pd.to_datetime(df['data'], format='%d/%m/%Y', errors='coerce').dt.date # Converte para data
+    
+    return df
+
 def write_sheet(service, values_to_write, RANGE_NAME):
     sheet = service.spreadsheets()
     body = {'values': values_to_write}

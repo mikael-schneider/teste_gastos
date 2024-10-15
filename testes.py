@@ -1,4 +1,5 @@
 import datetime as dt
+import pandas as pd
 
 def tratar_dados(dia: int, mes: int, descricao: str, valor: float, parcelas: int, classificacao: str):
     """
@@ -15,6 +16,7 @@ def tratar_dados(dia: int, mes: int, descricao: str, valor: float, parcelas: int
     Retorna:
     list: Lista de parcelas com data, descrição, valor por parcela, número de parcelas e classificação.
     """
+
     dados = []
     
     ano = dt.datetime.today().year
@@ -34,6 +36,31 @@ def tratar_dados(dia: int, mes: int, descricao: str, valor: float, parcelas: int
 
     return dados
 
+def lista():
+    lista = [1, 2, 3, 4, 5]
+    lista.insert(2, 6)
+    return lista
+
+'''print(lista())
+
 # Testando a função
 resultado = tratar_dados(1, 12, 'Teste', 100, 3, 'Teste')
-print(resultado)
+print(resultado)'''
+
+
+dict = {'a': [1,2,3,4,5]}
+dataframe = pd.DataFrame(dict)
+
+print(dataframe.sort_values(by='a', ascending=False))
+
+
+a = '123,123'
+
+print(a.replace(',', '.'))
+
+a, b = 3, 4
+
+c = a + b
+
+print(c)
+

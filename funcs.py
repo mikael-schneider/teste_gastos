@@ -10,6 +10,56 @@ def ano_atual():
 
     return dt.datetime.today().year
 
+def saldo_atual(df):
+
+    df = df.copy()
+
+    # Calcular a soma da coluna 'valor'
+    soma_proventos = df['proventos'].sum()
+    soma_debitos = df['debitos'].sum()
+
+    saldo_atual = soma_proventos - soma_debitos
+    
+    return saldo_atual
+
+def saldo_emprestado(df):
+
+    df = df.copy()
+
+    # Calcular a soma da coluna 'emprestimo'
+    soma_emprestimo = df['emprestimos'].sum()
+    soma_devolucao = df['devolucoes'].sum()
+
+    saldo_emprestado = soma_emprestimo - soma_devolucao
+
+    return saldo_emprestado
+
+def saldo_total_indisponivel(df):
+
+    df = df.copy()
+
+    saldo_atual = df['proventos'].sum() - df['debitos'].sum()
+    saldo_emprestado = df['emprestimos'].sum() - df['devolucoes'].sum()
+
+    saldo_total_indisponivel = saldo_atual + saldo_emprestado
+
+    return saldo_total_indisponivel
+
+def deb_previsto(df):
+
+    df = df.copy()
+    deb_previsto = df['deb_previsto'].sum()
+
+    return deb_previsto
+
+def prov_previsto(df):
+    
+        df = df.copy()
+        prov_previsto = df['prov_previsto'].sum()
+    
+        return prov_previsto
+
+
 def fatura_atual(df):
 
     df = df.copy()
