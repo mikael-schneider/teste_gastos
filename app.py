@@ -137,7 +137,7 @@ def main():
                                 conn.append_data(service, dados, 'saldo')
                             
                             elif tabela == 'Empréstimo':
-                                dados[2], dados[3], dados[6]= valor, valor
+                                dados[2], dados[3] = valor, valor
                                 conn.append_data(service, dados, 'saldo')
 
                             elif tabela == 'Devolução':
