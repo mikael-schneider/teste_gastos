@@ -194,13 +194,13 @@ def main():
 
                     saldo_previsto =  saldo_atual - (proximas_faturas + fatura_atual)
 
-                    st.metric('Saldo previsto', fc.formatar_valor_brasileiro(saldo_previsto))
+                    st.metric('Saldo previsto', fc.formatar_valor_brasileiro(saldo_previsto), help='Saldo atual descontado a fatura atual e as próximas')
                 
                 with saldo_total_previsto:
 
                     saldo_total_previsto = (fc.saldo_atual(data_saldo) + fc.saldo_emprestado(data_saldo) + fc.prov_previsto(data_saldo)) - (fc.deb_previsto(data_saldo) + fc.fatura_atual(data_mika) +  fc.proximas_faturas(data_mika))
 
-                    st.metric('Saldo total previsto', fc.formatar_valor_brasileiro(saldo_total_previsto))
+                    st.metric('Saldo total previsto', fc.formatar_valor_brasileiro(saldo_total_previsto), help='Valores totais previstos descontado a fatura atual, próximas e déb. previsto')
 
 
 
@@ -227,7 +227,7 @@ def main():
 
                 with fatura_total:
                     fatura_total = fc.fatura_atual(data_mika) + fc.fatura_atual(data_mae)
-                    st.metric('Fatura total', fc.formatar_valor_brasileiro(fatura_total))
+                    st.metric('Fatura total', fc.formatar_valor_brasileiro(fatura_total), help='Fatural atual acrescido da fatura da mãe')
     
 
     st.subheader('Graficos', divider='blue')
