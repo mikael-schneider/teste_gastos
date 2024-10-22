@@ -78,20 +78,25 @@ def main():
                             else:
 
                                 for i in range(int(parcelas)):
-                                        
-                                    # Cálculo para o mês atual, levando em consideração que pode passar de 12 (próximo ano)
-                                    mes_parcela = (int(mes) + i - 1) % 12 + 1
-                                    ano_parcela = int(ano) + (int(mes) + i - 1) // 12  # Incrementa o ano se o mês passar de 12
 
-                                    # Formatação da descrição e valores para cada parcela
-                                    descricao_parcela = f'{i+1}/{parcelas} {descricao}'
-                                    valor_parcela = float(valor) / int(parcelas)
-                                    
-                                    data = f'{dia}/{mes_parcela}/{ano_parcela}'
+                                    if i == 0:
+                                        dados = [f'{dia}/{mes}/{ano}', f'{i+1}/{parcelas} {descricao}', float(valor.replace(',','.'))/int(parcelas), parcelas, classificacao]
+                                        conn.append_data(service, dados, 'gastosmae')
 
-                                    # Adiciona os dados formatados para cada parcela na lista
-                                    dados = [data, descricao_parcela, valor_parcela, parcelas, classificacao]
-                                    conn.append_data(service, dados, 'gastosmae')
+                                    else:
+                                        # Cálculo para o mês atual, levando em consideração que pode passar de 12 (próximo ano)
+                                        mes_parcela = (int(mes) + i - 1) % 12 + 1
+                                        ano_parcela = int(ano) + (int(mes) + i - 1) // 12  # Incrementa o ano se o mês passar de 12
+
+                                        # Formatação da descrição e valores para cada parcela
+                                        descricao_parcela = f'{i+1}/{parcelas} {descricao}'
+                                        valor_parcela = float(valor) / int(parcelas)
+
+                                        data = f'{2}/{mes_parcela}/{ano_parcela}'
+
+                                        # Adiciona os dados formatados para cada parcela na lista
+                                        dados = [data, descricao_parcela, valor_parcela, parcelas, classificacao]
+                                        conn.append_data(service, dados, 'gastosmae')
 
                         
                             st.success('Dados adicionados com sucesso!')
