@@ -230,7 +230,7 @@ def main():
                     st.metric('Fatura total', fc.formatar_valor_brasileiro(fatura_total), help='Fatural atual acrescido da fatura da mãe')
     
 
-    st.subheader('Graficos', divider='blue')
+    st.subheader('Resumos', divider='blue')
 
     with st.container():
 
@@ -264,12 +264,11 @@ def main():
             st.markdown(
             """
             <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
-                <h6 style="text-align: center;">Gastos por classificação</h6>
+                <h6 style="text-align: center;">Gastos do mês</h6>
             </div>
             """, unsafe_allow_html=True
             )
-            fig3 = px.bar(x=fc.soma_valores_por_classificacao(data_mika).sort_values(ascending=True).values, y=fc.soma_valores_por_classificacao(data_mika).sort_values(ascending=True).index, orientation='h')
-            #st.plotly_chart(fig3, use_container_width=True)
+            st.dataframe(fc.df_mes_atual(data_mika).drop(columns=['classificacao']).sort_index(ascending=False), use_container_width=True, hide_index=True)
 
     st.subheader('Tabelas', divider='blue')
 

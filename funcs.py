@@ -59,6 +59,26 @@ def prov_previsto(df):
     
         return prov_previsto
 
+def df_mes_atual(df):
+
+    df = df.copy()
+
+    # Obter a data atual
+    data_atual = dt.datetime.today().date()
+
+    # Definir a data de início (dia 2 do mês atual)
+    data_inicial = data_atual.replace(day=2)
+    
+    # Definir a data final (dia 2 do mês seguinte)
+    if data_atual.month == 12:
+        data_final = data_atual.replace(year=data_atual.year + 1, month=1, day=2)
+    else:
+        data_final = data_atual.replace(month=data_atual.month + 1, day=2)
+
+    # Filtrar os dados entre as datas
+    df_filtrado = df[(df['data'] >= data_inicial) & (df['data'] < data_final)]
+
+    return df_filtrado
 
 def fatura_atual(df):
 
