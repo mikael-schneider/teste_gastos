@@ -57,7 +57,7 @@ def main():
                                 for i in range(int(parcelas)):
 
                                     if i == 0:
-                                        dados = [f'{dia}/{mes}/{ano}', f'{i+1}/{parcelas} {descricao}', float(valor.replace(',','.'))/int(parcelas), parcelas, classificacao]
+                                        dados = [f'{dia}/{mes}/{ano}', descricao, round(float(valor.replace(',','.'))/int(parcelas), 2), f'{i+1}/{parcelas}', classificacao]
                                         conn.append_data(service, dados, 'gastosmika')
 
                                     else:
@@ -66,13 +66,13 @@ def main():
                                         ano_parcela = int(ano) + (int(mes) + i - 1) // 12  # Incrementa o ano se o mês passar de 12
 
                                         # Formatação da descrição e valores para cada parcela
-                                        descricao_parcela = f'{i+1}/{parcelas} {descricao}'
-                                        valor_parcela = float(valor) / int(parcelas)
+                                        n_parcelas = f'{i+1}/{parcelas}'
+                                        valor_parcela = round(float(valor.replace(',','.'))/int(parcelas), 2)
 
                                         data = f'{2}/{mes_parcela}/{ano_parcela}'
 
                                         # Adiciona os dados formatados para cada parcela na lista
-                                        dados = [data, descricao_parcela, valor_parcela, parcelas, classificacao]
+                                        dados = [data, descricao, valor_parcela, n_parcelas, classificacao]
                                         conn.append_data(service, dados, 'gastosmika')
 
                             else:
