@@ -18,8 +18,69 @@ def main():
 
     with st.container():
 
-        dados, resumo = st.columns([0.1, 0.9])
+        resumo, dados = st.columns([0.9, 0.1])
 
+        with resumo:
+              
+            st.subheader('Métricas', divider='blue')
+
+            with st.container():
+
+                saldo_atual, saldo_emprestado, prov_previsto, deb_previsto, saldo_previsto, saldo_total_previsto = st.columns(6)
+
+                with saldo_atual:
+
+                    st.metric('Saldo atual', fc.formatar_valor_brasileiro(fc.saldo_atual(data_saldo)))
+
+                with saldo_emprestado:
+                    
+                    st.metric('Saldo emprestado', fc.formatar_valor_brasileiro(fc.saldo_emprestado(data_saldo)))
+
+                with prov_previsto:
+                    
+                    st.metric('Prov. Previsto', fc.formatar_valor_brasileiro(fc.prov_previsto(data_saldo)))
+
+                with deb_previsto:
+
+                    st.metric('Déb. Previsto', fc.formatar_valor_brasileiro(fc.deb_previsto(data_saldo)))
+                
+                with saldo_previsto:
+                    saldo_atual = fc.saldo_atual(data_saldo)
+                    proximas_faturas = fc.proximas_faturas(data_mika)
+                    fatura_atual = fc.fatura_atual(data_mika)
+
+                    saldo_previsto =  saldo_atual - (proximas_faturas + fatura_atual)
+
+                    st.metric('Saldo previsto', fc.formatar_valor_brasileiro(saldo_previsto), help='Saldo atual descontado a fatura atual e as próximas')
+                
+                with saldo_total_previsto:
+
+                    saldo_total_previsto = (fc.saldo_atual(data_saldo) + fc.saldo_emprestado(data_saldo) + fc.prov_previsto(data_saldo)) - (fc.deb_previsto(data_saldo) + fc.fatura_atual(data_mika) +  fc.proximas_faturas(data_mika))
+
+                    st.metric('Saldo total previsto', fc.formatar_valor_brasileiro(saldo_total_previsto), help='Valores totais previstos descontado a fatura atual, próximas e déb. previsto')
+
+            with st.container():
+                
+                fatura_atual, fatura_proxima, fatura_anterior, proximas_faturas, fatura_mae, fatura_total = st.columns(6)
+
+                with fatura_atual:
+                    st.metric('Fatural atual', fc.formatar_valor_brasileiro(fc.fatura_atual(data_mika)))
+
+                with fatura_proxima:
+                    st.metric('Próxima fatura', fc.formatar_valor_brasileiro(fc.fatura_proxima(data_mika)))
+                
+                with fatura_anterior:
+                    st.metric('Fatura anterior', fc.formatar_valor_brasileiro(fc.fatura_anterior(data_mika)))
+
+                with proximas_faturas:
+                    st.metric('Proximas faturas', fc.formatar_valor_brasileiro(fc.proximas_faturas(data_mika)), help='Soma dos próximos meses incluindo o mes seguinte')
+                
+                with fatura_mae:
+                    st.metric('Fatural atual mãe', fc.formatar_valor_brasileiro(fc.fatura_atual(data_mae)))
+
+                with fatura_total:
+                    fatura_total = fc.fatura_atual(data_mika) + fc.fatura_atual(data_mae)
+                    st.metric('Fatura total', fc.formatar_valor_brasileiro(fatura_total), help='Fatural atual acrescido da fatura da mãe')
         with dados:
 
             st.subheader('Registros', divider='blue')
@@ -80,7 +141,7 @@ def main():
                                 for i in range(int(parcelas)):
 
                                     if i == 0:
-                                        dados = [f'{dia}/{mes}/{ano}', f'{i+1}/{parcelas} {descricao}', float(valor.replace(',','.'))/int(parcelas), parcelas, classificacao]
+                                        dados = [f'{dia}/{mes}/{ano}', descricao, round(float(valor.replace(',','.'))/int(parcelas), 2), f'{i+1}/{parcelas}', classificacao]
                                         conn.append_data(service, dados, 'gastosmae')
 
                                     else:
@@ -89,13 +150,13 @@ def main():
                                         ano_parcela = int(ano) + (int(mes) + i - 1) // 12  # Incrementa o ano se o mês passar de 12
 
                                         # Formatação da descrição e valores para cada parcela
-                                        descricao_parcela = f'{i+1}/{parcelas} {descricao}'
-                                        valor_parcela = float(valor) / int(parcelas)
+                                        n_parcelas = f'{i+1}/{parcelas}'
+                                        valor_parcela = round(float(valor.replace(',','.'))/int(parcelas), 2)
 
                                         data = f'{2}/{mes_parcela}/{ano_parcela}'
 
                                         # Adiciona os dados formatados para cada parcela na lista
-                                        dados = [data, descricao_parcela, valor_parcela, parcelas, classificacao]
+                                        dados = [data, descricao, valor_parcela, n_parcelas, classificacao]
                                         conn.append_data(service, dados, 'gastosmae')
 
                         
@@ -163,74 +224,47 @@ def main():
                         else:
                             st.error('Preencha todos os campos!')
 
-        with resumo:
-              
-            st.subheader('Métricas', divider='blue')
-
-            with st.container():
-
-                saldo_atual, saldo_emprestado, prov_previsto, deb_previsto, saldo_previsto, saldo_total_previsto = st.columns(6)
-
-                with saldo_atual:
-
-                    st.metric('Saldo atual', fc.formatar_valor_brasileiro(fc.saldo_atual(data_saldo)))
-
-                with saldo_emprestado:
-                    
-                    st.metric('Saldo emprestado', fc.formatar_valor_brasileiro(fc.saldo_emprestado(data_saldo)))
-
-                with prov_previsto:
-                    
-                    st.metric('Prov. Previsto', fc.formatar_valor_brasileiro(fc.prov_previsto(data_saldo)))
-
-                with deb_previsto:
-
-                    st.metric('Déb. Previsto', fc.formatar_valor_brasileiro(fc.deb_previsto(data_saldo)))
-                
-                with saldo_previsto:
-                    saldo_atual = fc.saldo_atual(data_saldo)
-                    proximas_faturas = fc.proximas_faturas(data_mika)
-                    fatura_atual = fc.fatura_atual(data_mika)
-
-                    saldo_previsto =  saldo_atual - (proximas_faturas + fatura_atual)
-
-                    st.metric('Saldo previsto', fc.formatar_valor_brasileiro(saldo_previsto), help='Saldo atual descontado a fatura atual e as próximas')
-                
-                with saldo_total_previsto:
-
-                    saldo_total_previsto = (fc.saldo_atual(data_saldo) + fc.saldo_emprestado(data_saldo) + fc.prov_previsto(data_saldo)) - (fc.deb_previsto(data_saldo) + fc.fatura_atual(data_mika) +  fc.proximas_faturas(data_mika))
-
-                    st.metric('Saldo total previsto', fc.formatar_valor_brasileiro(saldo_total_previsto), help='Valores totais previstos descontado a fatura atual, próximas e déb. previsto')
-
-
-
-            st.divider()
-   
-            with st.container():
-                
-                fatura_atual, fatura_proxima, fatura_anterior, proximas_faturas, fatura_mae, fatura_total = st.columns(6)
-
-                with fatura_atual:
-                    st.metric('Fatural atual', fc.formatar_valor_brasileiro(fc.fatura_atual(data_mika)))
-
-                with fatura_proxima:
-                    st.metric('Próxima fatura', fc.formatar_valor_brasileiro(fc.fatura_proxima(data_mika)))
-                
-                with fatura_anterior:
-                    st.metric('Fatura anterior', fc.formatar_valor_brasileiro(fc.fatura_anterior(data_mika)))
-
-                with proximas_faturas:
-                    st.metric('Proximas faturas', fc.formatar_valor_brasileiro(fc.proximas_faturas(data_mika)), help='Soma dos próximos meses incluindo o mes seguinte')
-                
-                with fatura_mae:
-                    st.metric('Fatural atual mãe', fc.formatar_valor_brasileiro(fc.fatura_atual(data_mae)))
-
-                with fatura_total:
-                    fatura_total = fc.fatura_atual(data_mika) + fc.fatura_atual(data_mae)
-                    st.metric('Fatura total', fc.formatar_valor_brasileiro(fatura_total), help='Fatural atual acrescido da fatura da mãe')
     
 
-    st.subheader('Resumos', divider='blue')
+    st.subheader('Ultimos gastos', divider='blue')
+
+    with st.container():
+
+        tab_gasto_mikael, tab_gasto_mae = st.columns(2)
+
+        with tab_gasto_mikael:
+            st.markdown(
+            """
+            <div style="display: flex; justify-content: left; align-items: center; height: 100%;">
+            <h6 style="text-align: center;">Mikael</h6>
+            </div>
+            """, unsafe_allow_html=True
+            )
+            st.markdown(
+                f"<p style='display: inline-block; margin-right: 15px;'><strong>Data:</strong> {data_mika.iloc[-1]['data'].strftime('%d/%m/%Y')}</p>"
+                f"<p style='display: inline-block; margin-right: 15px;'><strong>Descrição:</strong> {data_mika.iloc[-1]['descricao']}</p>"
+                f"<p style='display: inline-block;'><strong>Valor:</strong> {str(data_mika.iloc[-1]['valor']).replace('.', ',')}</p>",
+                unsafe_allow_html=True
+            )
+
+        with tab_gasto_mae:
+
+            st.markdown(
+            """
+            <div style="display: flex; justify-content: left; align-items: center; height: 100%;">
+                <h6 style="text-align: center;">Mãe</h6>
+            </div>
+            """, unsafe_allow_html=True
+            )
+
+            st.markdown(
+                f"<p style='display: inline-block; margin-right: 15px;'><strong>Data:</strong> {data_mae.iloc[-1]['data'].strftime('%d/%m/%Y')}</p>"
+                f"<p style='display: inline-block; margin-right: 15px;'><strong>Descrição:</strong> {data_mae.iloc[-1]['descricao']}</p>"
+                f"<p style='display: inline-block;'><strong>Valor:</strong> {str(data_mae.iloc[-1]['valor']).replace('.', ',')}</p>",
+                unsafe_allow_html=True
+            )
+
+    st.subheader('Gráficos', divider='blue')
 
     with st.container():
 
@@ -260,16 +294,19 @@ def main():
             st.plotly_chart(fig2, use_container_width=True)
 
         with tab_graf3:
-
             st.markdown(
             """
             <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
-                <h6 style="text-align: center;">Gastos do mês</h6>
+                <h6 style="text-align: center;">Ultimo gasto Mãe</h6>
             </div>
             """, unsafe_allow_html=True
             )
-            st.dataframe(fc.df_mes_atual(data_mika).drop(columns=['classificacao']).sort_index(ascending=False), use_container_width=True, hide_index=True)
+            st.write('Gráfico 3')
+            
+            
 
+
+           
     st.subheader('Tabelas', divider='blue')
 
     with st.container():

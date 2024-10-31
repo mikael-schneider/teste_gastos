@@ -77,6 +77,7 @@ def df_mes_atual(df):
 
     # Filtrar os dados entre as datas
     df_filtrado = df[(df['data'] >= data_inicial) & (df['data'] < data_final)]
+    df_filtrado.drop(columns=['parcelas','classificacao'], inplace=True)
 
     return df_filtrado
 
