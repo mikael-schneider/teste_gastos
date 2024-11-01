@@ -137,10 +137,15 @@ def fatura_proxima(df):
     data_atual = dt.datetime.today().date()
 
     # Definir a data de início (dia 2 do mês atual)
-    data_inicial = data_atual.replace(day=2, month=data_atual.month + 1)
+    if data_atual.month == 12:
+        data_inicial = data_atual.replace(year=data_atual.year + 1, month=1, day=2)
+    else:
+        data_inicial = data_atual.replace(day=2, month=data_atual.month + 1)
     
     # Definir a data final (dia 2 do mês seguinte)
     if data_atual.month == 12:
+        data_final = data_inicial.replace(year=data_atual.year + 1, month=1, day=2)
+    elif data_atual.month == 11:
         data_final = data_inicial.replace(year=data_atual.year + 1, month=1, day=2)
     else:
         data_final = data_inicial.replace(month=data_inicial.month + 1, day=2)

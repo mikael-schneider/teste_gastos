@@ -1,66 +1,32 @@
 import datetime as dt
 import pandas as pd
 
-def tratar_dados(dia: int, mes: int, descricao: str, valor: float, parcelas: int, classificacao: str):
-    """
-    Função para dividir um valor em parcelas e retornar uma lista com os dados das parcelas.
+def fatura_proxima(df):
 
-    Parâmetros:
-    dia (int): O dia do vencimento.
-    mes (int): O mês do vencimento.
-    descricao (str): Descrição do gasto.
-    valor (float): O valor total.
-    parcelas (int): Número de parcelas.
-    classificacao (str): Classificação do gasto.
+    df = df.copy()
 
-    Retorna:
-    list: Lista de parcelas com data, descrição, valor por parcela, número de parcelas e classificação.
-    """
+    # Obter a data atual
+    data_atual = dt.datetime.today().date()
 
-    dados = []
+    # Definir a data de início (dia 2 do mês atual)
+    data_inicial = data_atual.replace(day=2, month=data_atual.month + 1)
     
-    ano = dt.datetime.today().year
+    # Definir a data final (dia 2 do mês seguinte)
+    if data_atual.month == 12:
+        data_final = data_inicial.replace(year=data_atual.year + 1, month=1, day=2)
+    elif data_atual.month == 11:
+        data_final = data_inicial.replace(year=data_atual.year + 1, month=1, day=2)
+    else:
+        data_final = data_inicial.replace(month=data_inicial.month + 1, day=2)
+
+    # Filtrar os dados entre as datas
+    df_filtrado = df[(df['data'] >= data_inicial) & (df['data'] < data_final)]
     
-    for i in range(parcelas):
-        
-        # Cálculo para o mês atual, levando em consideração que pode passar de 12 (próximo ano)
-        mes_parcela = (mes + i - 1) % 12 + 1
-        ano_parcela = ano + (mes + i - 1) // 12  # Incrementa o ano se o mês passar de 12
+    # Calcular a soma da coluna 'valor'
+    soma_valores = df_filtrado['valor'].sum()
+    return soma_valores
 
-        # Formatação da descrição e valores para cada parcela
-        descricao_parcela = f'{i+1}/{parcelas} {descricao}'
-        valor_parcela = float(valor) / parcelas
-        
-        # Adiciona os dados formatados para cada parcela na lista
-        dados.append([f'{dia}/{mes_parcela}/{ano_parcela}', descricao_parcela, valor_parcela, parcelas, classificacao])
+dataframe = pd.DataFrame({'data': ['2021-01-01', '2021-01-02', '2021-02-01', '2021-02-02']})
 
-    return dados
-
-def lista():
-    lista = [1, 2, 3, 4, 5]
-    lista.insert(2, 6)
-    return lista
-
-'''print(lista())
-
-# Testando a função
-resultado = tratar_dados(1, 12, 'Teste', 100, 3, 'Teste')
-print(resultado)'''
-
-
-dict = {'a': [1,2,3,4,5]}
-dataframe = pd.DataFrame(dict)
-
-print(dataframe.sort_values(by='a', ascending=False))
-
-
-a = '123,123'
-
-print(a.replace(',', '.'))
-
-a, b = 3, 4
-
-c = a + b
-
-print(c)
+print(fatura_proxima(dataframe))
 

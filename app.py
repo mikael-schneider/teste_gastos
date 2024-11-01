@@ -68,7 +68,7 @@ def main():
 
                 with fatura_proxima:
                     st.metric('Próxima fatura', fc.formatar_valor_brasileiro(fc.fatura_proxima(data_mika)))
-                
+                    
                 with fatura_anterior:
                     st.metric('Fatura anterior', fc.formatar_valor_brasileiro(fc.fatura_anterior(data_mika)))
 
