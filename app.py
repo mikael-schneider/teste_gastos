@@ -284,8 +284,6 @@ def main():
             fig2 = px.area(x=fc.soma_valores_por_mes(data_mika).index.astype(str), y=fc.soma_valores_por_mes(data_mika).values)
             st.plotly_chart(fig2, use_container_width=True)
 
-            fig2 = px.area(x=)
-
         with tab_graf2:
             st.markdown(
             """
