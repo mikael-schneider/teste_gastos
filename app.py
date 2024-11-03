@@ -61,26 +61,28 @@ def main():
 
             with st.container():
                 
-                fatura_atual, fatura_proxima, fatura_anterior, proximas_faturas, fatura_mae, fatura_total = st.columns(6)
+                fatura_atual, fatura_anterior, fatura_proxima, proximas_faturas, fatura_mae, fatura_anterior_mae = st.columns(6)
 
                 with fatura_atual:
                     st.metric('Fatural atual', fc.formatar_valor_brasileiro(fc.fatura_atual(data_mika)))
+                    fatura_total = fc.fatura_atual(data_mika) + fc.fatura_atual(data_mae)
+                    st.metric('Fatura atual total', fc.formatar_valor_brasileiro(fatura_total), help='Fatural atual acrescido da fatura da mãe')
+
+                with fatura_anterior:
+                    st.metric('Fatura anterior', fc.formatar_valor_brasileiro(fc.fatura_anterior(data_mika)))
 
                 with fatura_proxima:
                     st.metric('Próxima fatura', fc.formatar_valor_brasileiro(fc.fatura_proxima(data_mika)))
                     
-                with fatura_anterior:
-                    st.metric('Fatura anterior', fc.formatar_valor_brasileiro(fc.fatura_anterior(data_mika)))
-
                 with proximas_faturas:
                     st.metric('Proximas faturas', fc.formatar_valor_brasileiro(fc.proximas_faturas(data_mika)), help='Soma dos próximos meses incluindo o mes seguinte')
                 
                 with fatura_mae:
                     st.metric('Fatural atual mãe', fc.formatar_valor_brasileiro(fc.fatura_atual(data_mae)))
 
-                with fatura_total:
-                    fatura_total = fc.fatura_atual(data_mika) + fc.fatura_atual(data_mae)
-                    st.metric('Fatura total', fc.formatar_valor_brasileiro(fatura_total), help='Fatural atual acrescido da fatura da mãe')
+                with fatura_anterior_mae:
+                    st.metric('Fatura anterior', fc.formatar_valor_brasileiro(fc.fatura_anterior(data_mae)))
+
         with dados:
 
             st.subheader('Registros', divider='blue')
@@ -282,6 +284,8 @@ def main():
             fig2 = px.area(x=fc.soma_valores_por_mes(data_mika).index.astype(str), y=fc.soma_valores_por_mes(data_mika).values)
             st.plotly_chart(fig2, use_container_width=True)
 
+            fig2 = px.area(x=)
+
         with tab_graf2:
             st.markdown(
             """
@@ -303,10 +307,7 @@ def main():
             )
             st.write('Gráfico 3')
             
-            
-
-
-           
+                       
     st.subheader('Tabelas', divider='blue')
 
     with st.container():
