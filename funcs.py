@@ -144,7 +144,7 @@ def fatura_proxima(df):
     
     # Definir a data final (dia 2 do mês seguinte)
     if data_atual.month == 12:
-        data_final = data_inicial.replace(year=data_atual.year + 1, month=1, day=2)
+        data_final = data_inicial.replace(month= data_inicial.month + 1, day=2)
     elif data_atual.month == 11:
         data_final = data_inicial.replace(year=data_atual.year + 1, month=1, day=2)
     else:
@@ -155,6 +155,7 @@ def fatura_proxima(df):
     
     # Calcular a soma da coluna 'valor'
     soma_valores = df_filtrado['valor'].sum()
+    
     return soma_valores
 
 def proximas_faturas(df):
@@ -165,7 +166,10 @@ def proximas_faturas(df):
     data_atual = dt.datetime.today().date()
 
     # Definir a data de início (dia 2 do mês atual)
-    data_inicial = data_atual.replace(day=2, month=data_atual.month + 1)
+    if data_atual.month == 12:
+        data_inicial = data_atual.replace(year=data_atual.year + 1, month=1, day=2)
+    else:
+        data_inicial = data_atual.replace(day=2, month=data_atual.month + 1)
     
     # Filtrar os dados entre as datas
     df_filtrado = df[(df['data'] >= data_inicial)]
@@ -188,6 +192,19 @@ def soma_valores_por_classificacao(df):
 def soma_valores_por_mes(df):
 
     df = df.copy()
+
+    # Group the data by month and year
+    df['mes'] = pd.to_datetime(df['data']).dt.to_period('M')
+    df_grouped = df.groupby('mes')['valor'].sum()
+
+    return df_grouped
+
+def soma_valores_proventos_por_mes(df_fatura, df_proventos):
+
+    df_fatura = df_fatura.copy()
+    df_proventos = df_proventos.copy()
+
+    df = pd.merge(df_fatura, df_proventos, on='data', how='left')
 
     # Group the data by month and year
     df['mes'] = pd.to_datetime(df['data']).dt.to_period('M')

@@ -10,7 +10,7 @@ def main():
 
     service = conn.get_service()
 
-    data_mika, data_mae, data_saldo = conn.read_sheet(service, 'gastosmika'), conn.read_sheet(service, 'gastosmae'), conn.read_sheet_saldo(service, 'saldo')
+    data_mika, data_mae, data_saldo, data_proventos = conn.read_sheet(service, 'gastosmika'), conn.read_sheet(service, 'gastosmae'), conn.read_sheet_saldo(service, 'saldo'), conn.read_sheet(service, 'proventos')
 
     ano = fc.ano_atual()
 
@@ -58,30 +58,30 @@ def main():
                     saldo_total_previsto = (fc.saldo_atual(data_saldo) + fc.saldo_emprestado(data_saldo) + fc.prov_previsto(data_saldo)) - (fc.deb_previsto(data_saldo) + fc.fatura_atual(data_mika) +  fc.proximas_faturas(data_mika))
 
                     st.metric('Saldo total previsto', fc.formatar_valor_brasileiro(saldo_total_previsto), help='Valores totais previstos descontado a fatura atual, próximas e déb. previsto')
-
+            
+            st.subheader('Faturas', divider='blue')
+            
             with st.container():
                 
-                fatura_atual, fatura_anterior, fatura_proxima, proximas_faturas, fatura_mae, fatura_anterior_mae = st.columns(6)
+                fatura_atual_anterior, fatura_proxima, fatura_mae, fatura_total = st.columns(4)
 
-                with fatura_atual:
+                with fatura_atual_anterior:
                     st.metric('Fatural atual', fc.formatar_valor_brasileiro(fc.fatura_atual(data_mika)))
-                    fatura_total = fc.fatura_atual(data_mika) + fc.fatura_atual(data_mae)
-                    st.metric('Fatura atual total', fc.formatar_valor_brasileiro(fatura_total), help='Fatural atual acrescido da fatura da mãe')
-
-                with fatura_anterior:
                     st.metric('Fatura anterior', fc.formatar_valor_brasileiro(fc.fatura_anterior(data_mika)))
 
                 with fatura_proxima:
                     st.metric('Próxima fatura', fc.formatar_valor_brasileiro(fc.fatura_proxima(data_mika)))
-                    
-                with proximas_faturas:
                     st.metric('Proximas faturas', fc.formatar_valor_brasileiro(fc.proximas_faturas(data_mika)), help='Soma dos próximos meses incluindo o mes seguinte')
-                
+                    
                 with fatura_mae:
                     st.metric('Fatural atual mãe', fc.formatar_valor_brasileiro(fc.fatura_atual(data_mae)))
+                    st.metric('Fatura anterior mãe', fc.formatar_valor_brasileiro(fc.fatura_anterior(data_mae)))
 
-                with fatura_anterior_mae:
-                    st.metric('Fatura anterior', fc.formatar_valor_brasileiro(fc.fatura_anterior(data_mae)))
+                with fatura_total:
+                    fatura_total = fc.fatura_atual(data_mika) + fc.fatura_atual(data_mae)
+                    fatura_total_anterior = fc.fatura_anterior(data_mika) + fc.fatura_anterior(data_mae)
+                    st.metric('Fatura total atual', fc.formatar_valor_brasileiro(fatura_total), help='Fatural atual acrescido da fatura da mãe')
+                    st.metric('Fatura total anterior', fc.formatar_valor_brasileiro(fatura_total_anterior), help='Fatural anterior acrescido da fatura da mãe')
 
         with dados:
 
@@ -280,9 +280,11 @@ def main():
             </div>
             """, unsafe_allow_html=True
             )
-
             fig2 = px.area(x=fc.soma_valores_por_mes(data_mika).index.astype(str), y=fc.soma_valores_por_mes(data_mika).values)
             st.plotly_chart(fig2, use_container_width=True)
+
+            #fc.soma_valores_proventos_por_mes(data_mika, data_proventos) nao esta funcionando ver dps
+
 
         with tab_graf2:
             st.markdown(
@@ -310,39 +312,30 @@ def main():
 
     with st.container():
 
-        tab_dataf1, tab_dataf2, tab_dataf3, tab_dataf4 = st.columns([0.1, 0.15, 0.30, 0.45])
+        tab_dataf1, tab_dataf2, tab_dataf3 = st.columns(3)
+
 
         with tab_dataf1:
             st.markdown(
             """
             <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
-                <h6 style="text-align: center;">Gastos por mês</h6>
-            </div>
-            """, unsafe_allow_html=True
-        )
-            st.dataframe(fc.soma_valores_por_mes(data_mika).sort_index(ascending=False).reset_index(), use_container_width=True, height=900, hide_index=True)
-        
-        with tab_dataf2:
-            st.markdown(
-            """
-            <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
-                <h6 style="text-align: center;">Gastos por classificação</h6>
-            </div>
-            """, unsafe_allow_html=True
-        )
-            st.dataframe(fc.soma_valores_por_classificacao(data_mika).sort_values(ascending=False).reset_index(), use_container_width=True, height=900, hide_index=True)
-
-        with tab_dataf3:
-            st.markdown(
-            """
-            <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
-                <h6 style="text-align: center;">Tabela de gastos</h6>
+                <h6 style="text-align: center;">Tabela de gastos Mikael</h6>
             </div>
             """, unsafe_allow_html=True
         )
             st.dataframe(data_mika.sort_values(by='data', ascending=False), use_container_width=True, height=900, hide_index=True)
         
-        with tab_dataf4:
+        with tab_dataf2:
+            st.markdown(
+            """
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                <h6 style="text-align: center;">Tabela de gastos Mãe</h6>
+            </div>
+            """, unsafe_allow_html=True
+        )
+            st.dataframe(data_mae.sort_values(by='data', ascending=False), use_container_width=True, height=900, hide_index=True)
+        
+        with tab_dataf3:
             st.markdown(
             """
             <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
@@ -351,7 +344,6 @@ def main():
             """, unsafe_allow_html=True
         )
             st.dataframe(data_saldo, use_container_width=True, height=900, hide_index=True)
-
 
         if st.button('Carregar dados da planilha'):
             data = conn.read_sheet(service, 'gastosmae')
