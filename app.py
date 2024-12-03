@@ -243,9 +243,9 @@ def main():
             """, unsafe_allow_html=True
             )
             st.markdown(
-                f"<p style='display: inline-block; margin-right: 15px;'><strong>Data:</strong> {data_mika.iloc[-1]['data'].strftime('%d/%m/%Y')}</p>"
-                f"<p style='display: inline-block; margin-right: 15px;'><strong>Descrição:</strong> {data_mika.iloc[-1]['descricao']}</p>"
-                f"<p style='display: inline-block;'><strong>Valor:</strong> {str(data_mika.iloc[-1]['valor']).replace('.', ',')}</p>",
+                f"<p style='display: inline-block; margin-right: 15px;'><strong>Data:</strong> {fc.ultimo_gasto_mes(data_mika).iloc[-1]['data'].strftime('%d/%m/%Y')}</p>"
+                f"<p style='display: inline-block; margin-right: 15px;'><strong>Descrição:</strong> {fc.ultimo_gasto_mes(data_mika).iloc[-1]['descricao']}</p>"
+                f"<p style='display: inline-block;'><strong>Valor:</strong> {str(fc.ultimo_gasto_mes(data_mika).iloc[-1]['valor']).replace('.', ',')}</p>",
                 unsafe_allow_html=True
             )
 
@@ -260,9 +260,9 @@ def main():
             )
 
             st.markdown(
-                f"<p style='display: inline-block; margin-right: 15px;'><strong>Data:</strong> {data_mae.iloc[-1]['data'].strftime('%d/%m/%Y')}</p>"
-                f"<p style='display: inline-block; margin-right: 15px;'><strong>Descrição:</strong> {data_mae.iloc[-1]['descricao']}</p>"
-                f"<p style='display: inline-block;'><strong>Valor:</strong> {str(data_mae.iloc[-1]['valor']).replace('.', ',')}</p>",
+                f"<p style='display: inline-block; margin-right: 15px;'><strong>Data:</strong> {fc.ultimo_gasto_mes(data_mae).iloc[-1]['data'].strftime('%d/%m/%Y')}</p>"
+                f"<p style='display: inline-block; margin-right: 15px;'><strong>Descrição:</strong> {fc.ultimo_gasto_mes(data_mae).iloc[-1]['descricao']}</p>"
+                f"<p style='display: inline-block;'><strong>Valor:</strong> {str(fc.ultimo_gasto_mes(data_mae).iloc[-1]['valor']).replace('.', ',')}</p>",
                 unsafe_allow_html=True
             )
 
